@@ -26,3 +26,5 @@ First, pull raw tweets for a set of users:
 Next, specify fields and convert to csv:
 
     node convert.js dataset.json screen_name retweet_count > data.csv
+
+More info on possible fields can be found on [Twitter's dev site](https://dev.twitter.com/docs/platform-objects/tweets).
