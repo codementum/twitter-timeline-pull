@@ -2,16 +2,15 @@
 var ntwitter  = require('ntwitter')
   , _         = require('underscore')
   , fs        = require('fs')
+  , maxTweets = process.argv[5]
   , dataset   = []
   , allData   = []
   , twit
 
-  var params = {
-    lat       : process.argv[2],
-    lon       : process.argv[3],
-    radius    : process.argv[4],
-    maxTweets : process.argv[5]
-  }
+var params = {
+  geocode: process.argv[2] + ',' + process.argv[3] + ',' + process.argv[4],
+  count: 100
+}
 
 init()
 
@@ -25,51 +24,32 @@ function init() {
       if(typeof data === 'undefined')
         console.log('twitter keys error')
       else
-        console.log(params)
-//        getTweets(params, null, finishUp)
+        getTweets(params, null, finishUp)
     })
   })
 }
 
-function getTweets(params, maxid, cb){
-  params.count = 200;
+// example url: https://api.twitter.com/1.1/search/tweets.json?q=&geocode=-22.912214,-43.230182,1km&lang=pt&result_type=recent
+function getTweets(params, max_id, cb){
+  if( max_id ) params.max_id = max_id
 
-  if( maxid ) params.max_id = maxid
-
-    // TODO use search instead
-    // TODO put params in search
-  twit.getUserTimeline(params, function(err, data) {
+  twit.search('', params, function(err, data) {
     if( err ) console.log(err)
 
-    if( dataset.length < maxTweets && data.length > 1 ){
-      dataset = dataset.concat(data)
+    if( dataset.length < maxTweets && data.statuses.length > 1 ){
+      dataset = dataset.concat(data.statuses)
       var min = _.min(dataset, function(d) { return d.id }).id
 
       setTimeout( function() { 
-        getTweets(user, min, cb) 
+        getTweets(params, min, cb) 
       }, 5100)
 
     } else {
-      // TODO can probably finish up here
       cb()
     }
 
   })
 }
-
-//function concatAndMoveOn(d) {
-//  dataset = []
-//  nextUser()
-//}
-
-//function nextQuery() {
-//  if( dataset.length >= maxTweets ) { 
-//    finishUp()
-//    return
-//  }
-//  var user = users.pop()
-//  getTweets(user, null, concatAndMoveOn)
-//}
 
 function finishUp() {
   allData = allData.concat(dataset)
