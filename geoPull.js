@@ -1,4 +1,4 @@
-// run as `node getGeo.js lat lon radius maxTweets
+// run as `node geoPull.js lat lon radius maxTweets
 var ntwitter  = require('ntwitter')
   , _         = require('underscore')
   , fs        = require('fs')
